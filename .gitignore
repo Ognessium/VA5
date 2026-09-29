@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.env.local
+Full-Duplex-Bench/v3/fdb_v3_data_released/
+Full-Duplex-Bench/v3/test_data/
+tmp_pip/
+tmp_fdb/
+*.json
+!tool_manifest.json
+cached_prompts.json
+*report*.json
+whisper-large-v3-turbo/

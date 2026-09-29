@@ -1,0 +1,110 @@
+[
+  {
+    "name": "search_flights",
+    "description": "Search for available flights to a destination.",
+    "modifies_state": false,
+    "parameters": {
+      "destination": {"type": "string", "description": "The city or airport code"},
+      "date": {"type": "string", "description": "The travel date"}
+    }
+  },
+  {
+    "name": "book_flight",
+    "description": "Book a flight ticket for a passenger.",
+    "modifies_state": true,
+    "parameters": {
+      "passenger_name": {"type": "string", "description": "Full name of the passenger"}
+    }
+  },
+  {
+    "name": "update_identity_doc",
+    "description": "Update a user identity document (passport, visa, driver license).",
+    "modifies_state": true,
+    "parameters": {
+      "doc_type": {"type": "string", "description": "Type of document: passport, visa, driver_license"},
+      "doc_number": {"type": "string", "description": "The document identifier string"}
+    }
+  },
+  {
+    "name": "get_card_benefits",
+    "description": "Get benefits for a credit card type.",
+    "modifies_state": false,
+    "parameters": {
+      "card_type": {"type": "string", "description": "The card type, e.g. platinum, gold, travel"}
+    }
+  },
+  {
+    "name": "get_exchange_rate",
+    "description": "Fetch the current foreign exchange rate and convert an amount.",
+    "modifies_state": false,
+    "parameters": {
+      "amount": {"type": "number", "description": "Amount to convert"},
+      "from_currency": {"type": "string", "description": "3-letter source currency code"},
+      "to_currency": {"type": "string", "description": "3-letter target currency code"}
+    }
+  },
+  {
+    "name": "modify_autopay",
+    "description": "Modify autopay billing settings.",
+    "modifies_state": true,
+    "parameters": {
+      "bill_type": {"type": "string", "description": "Type of bill: credit_card, mortgage, utilities"},
+      "source_account": {"type": "string", "description": "Bank account to pull from: checking, savings"}
+    }
+  },
+  {
+    "name": "search_apartments",
+    "description": "Search for available rental apartments.",
+    "modifies_state": false,
+    "parameters": {
+      "city": {"type": "string", "description": "Destination city"},
+      "bedrooms": {"type": "integer", "description": "Number of bedrooms"},
+      "max_price": {"type": "number", "description": "Maximum monthly rent budget"}
+    }
+  },
+  {
+    "name": "calculate_commute",
+    "description": "Calculate commute duration between two addresses.",
+    "modifies_state": false,
+    "parameters": {
+      "origin_address": {"type": "string", "description": "Starting location"},
+      "destination_address": {"type": "string", "description": "Destination location"},
+      "mode": {"type": "string", "description": "Transport mode: driving, transit, walking"}
+    }
+  },
+  {
+    "name": "update_search_filter",
+    "description": "Update the user's search filter in the backend system.",
+    "modifies_state": true,
+    "parameters": {
+      "filter_name": {"type": "string", "description": "Filter key to modify"},
+      "value": {"type": "string", "description": "Filter value to apply"}
+    }
+  },
+  {
+    "name": "track_order",
+    "description": "Track the status of a physical package order.",
+    "modifies_state": false,
+    "parameters": {
+      "order_id": {"type": "string", "description": "Order identifier to track"}
+    }
+  },
+  {
+    "name": "search_products",
+    "description": "Search for products in the catalog.",
+    "modifies_state": false,
+    "parameters": {
+      "query": {"type": "string", "description": "Product search term"},
+      "max_price": {"type": "number", "description": "Optional maximum budget"}
+    }
+  },
+  {
+    "name": "add_to_cart",
+    "description": "Add an item to the shopping cart.",
+    "modifies_state": true,
+    "parameters": {
+      "product_id": {"type": "string", "description": "ID of the product"},
+      "quantity": {"type": "integer", "description": "Amount to add"}
+    }
+  }
+]

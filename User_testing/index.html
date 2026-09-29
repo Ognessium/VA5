@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VoiceAgentV5 — Message Tracer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Styling: Dark theme, glassmorphism, modern list for messages */
+    :root {
+      --bg: #0f1115;
+      --bg-panel: #16191f;
+      --border: #2a2e37;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
+    
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border);
+    }
+    .title { font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; display: flex; align-items: center; gap: 12px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; }
+    
+    .main { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 24px; max-width: 1600px; margin: 0 auto; width: 100%; }
+    .layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; height: 100%; overflow: hidden; }
+    .panel { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    .panel-title { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
+    .message-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; }
+    
+    .message-card {
+      background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px; display: flex; flex-direction: column; gap: 12px;
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .msg-header { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+    .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; text-transform: uppercase; color: #fff; font-weight: 700; }
+    
+    /* Dynamic Badge Colors */
+    .badge[data-actor="user"] { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .badge[data-actor*="talker"] { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .badge[data-actor*="reasoner"] { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+    
+    .arrow { color: var(--text-muted); font-size: 1rem; }
+    
+    .msg-time { margin-left: auto; font-family: monospace; color: #64748b; }
+    .msg-content { font-size: 1.05rem; line-height: 1.6; padding: 16px; background: rgba(0,0,0,0.2); border-radius: 6px; color: #f8fafc; border: 1px solid rgba(255,255,255,0.05); }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title"><div class="status-dot"></div> ACTOR MESSAGE TRACER</div>
+    <button onclick="fetch('/api/reset', {method:'POST'})" style="padding:8px 16px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;cursor:pointer;font-weight:600;">Clear Log</button>
+  </div>
+  <div class="main">
+    <div class="layout-grid">
+      <div class="panel">
+        <div class="panel-title">Conversation Actors</div>
+        <div class="message-container" id="msgContainer">
+          <div style="text-align:center;color:var(--text-muted);margin-top:40px;">Waiting for messages...</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Reasoner Internal (LLM)</div>
+        <div class="message-container" id="reasonerContainer">
+          <div style="text-align:center;color:var(--text-muted);margin-top:40px;">Waiting for reasoner...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let msgCount = 0;
+    async function update() {
+      try {
+        const res = await fetch('/api/messages');
+        const data = await res.json();
+        if (data.messages.length !== msgCount) {
+          msgCount = data.messages.length;
+          render(data.messages);
+        }
+      } catch (e) {}
+    }
+    
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    function render(messages) {
+      const actorMsgs = messages.filter(m => m.source !== 'Reasoner Engine' && m.destination !== 'Reasoner Engine');
+      const reasonerMsgs = messages.filter(m => m.source === 'Reasoner Engine' || m.destination === 'Reasoner Engine');
+      
+      updateContainer('msgContainer', actorMsgs, "Waiting for messages...");
+      updateContainer('reasonerContainer', reasonerMsgs, "Waiting for reasoner...");
+    }
+
+    function updateContainer(id, msgs, emptyText) {
+      const container = document.getElementById(id);
+      const isScrolled = container.scrollHeight - container.clientHeight <= container.scrollTop + 50;
+      
+      if (msgs.length === 0) {
+        container.innerHTML = `<div style="text-align:center;color:var(--text-muted);margin-top:40px;">${emptyText}</div>`;
+        return;
+      }
+      
+      container.innerHTML = msgs.map(m => `
+        <div class="message-card">
+          <div class="msg-header">
+            <span class="badge" data-actor="${m.source.toLowerCase()}">${m.source}</span>
+            <span class="arrow">→</span>
+            <span class="badge" data-actor="${m.destination.toLowerCase()}">${m.destination}</span>
+            <span class="msg-time">${m.timestamp}</span>
+          </div>
+          <div class="msg-content"><pre style="margin:0;white-space:pre-wrap;font-family:inherit;">${escapeHTML(m.content)}</pre></div>
+        </div>
+      `).join('');
+      
+      if (isScrolled) container.scrollTop = container.scrollHeight;
+    }
+    
+    setInterval(update, 500);
+  </script>
+</body>
+</html>

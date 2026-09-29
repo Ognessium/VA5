@@ -1,0 +1,30 @@
+Name: models/gemini-2.5-flash, Display Name: Gemini 2.5 Flash
+Name: models/gemini-2.5-flash-preview-tts, Display Name: Gemini 2.5 Flash Preview TTS
+Name: models/gemini-flash-latest, Display Name: Gemini Flash Latest
+Name: models/gemini-flash-lite-latest, Display Name: Gemini Flash-Lite Latest
+Name: models/gemini-2.5-flash-lite, Display Name: Gemini 2.5 Flash-Lite
+Name: models/gemini-2.5-flash-image, Display Name: Nano Banana
+Name: models/gemini-3-flash-preview, Display Name: Gemini 3 Flash Preview
+Name: models/gemini-3.1-flash-lite-preview, Display Name: Gemini 3.1 Flash Lite Preview
+Name: models/gemini-3.1-flash-lite, Display Name: Gemini 3.1 Flash Lite
+Name: models/gemini-3.1-flash-image-preview, Display Name: Nano Banana 2
+Name: models/gemini-3.1-flash-image, Display Name: Nano Banana 2
+Name: models/gemini-3.1-flash-lite-image, Display Name: Nano Banana 2 Lite
+Name: models/gemini-3.5-flash, Display Name: Gemini 3.5 Flash
+Name: models/gemini-3.5-flash-lite, Display Name: Gemini 3.5 Flash Lite
+Name: models/gemini-omni-flash-preview, Display Name: Gemini Omni Flash Preview
+Name: models/gemini-omni-1.1-flash, Display Name: Gemini Omni 1.1 Flash
+Name: models/gemini-3.6-flash, Display Name: Gemini 3.6 Flash
+Name: models/gemini-3.7-flash, Display Name: Gemini 3.7 Flash
+Name: models/gemini-3.8-flash, Display Name: Gemini 3.8 Flash
+Name: models/gemini-3.1-flash-tts-preview, Display Name: Gemini 3.1 Flash TTS Preview
+Name: models/gemini-3.8-flash-tts, Display Name: Gemini 3.8 Flash TTS
+Name: models/gemini-3.8-flash-lite-tts, Display Name: Gemini 3.8 Flash Lite TTS
+Name: models/gemini-3.5-transcribe-live, Display Name: Gemini 3.5 Transcribe Live
+Name: models/gemini-2.5-flash-native-audio-latest, Display Name: Gemini 2.5 Flash Native Audio Latest
+Name: models/gemini-2.5-flash-native-audio-preview-09-2025, Display Name: Gemini 2.5 Flash Native Audio Preview 09-2025
+Name: models/gemini-2.5-flash-native-audio-preview-12-2025, Display Name: Gemini 2.5 Flash Native Audio Preview 12-2025
+Name: models/gemini-3.1-flash-live-preview, Display Name: Gemini 3.1 Flash Live Preview
+Name: models/gemini-3.8-live, Display Name: Gemini 3.8 Live
+Name: models/gemini-3.8-live-extended-thinking, Display Name: Gemini 3.8 Live Extended Thinking
+Name: models/gemini-3.5-live-translate-preview, Display Name: Gemini 3.5 Live Translate Preview
