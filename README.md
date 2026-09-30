@@ -22,7 +22,7 @@ This agent uses a **Dual-Architecture** (Talker + Reasoner) design, separating c
      ┌───────────▼──────┐  ┌────▼───────────────────────────┐
      │   Fast Talker     │  │      Slow Reasoner (Director)   │
      │ Gemini Live V2V   │  │      gemini-3.5-flash-lite (cloud)   │
-     │ < 300 ms response │  │      ↳ local qwen2.5 (fallback) │
+     │ < 300 ms response │  │      ↳ local fallback           │
      │ Reads State API   │◄─│      Reads+Writes State API     │
      └───────────────────┘  └──────────────┬─────────────────┘
                                            │
@@ -55,7 +55,7 @@ See [`docs/architecture.md`](docs/architecture.md) for the full component breakd
 - Python 3.11+
 - A **Google AI Studio** API key (free at [aistudio.google.com](https://aistudio.google.com))
 - A **LiveKit Cloud** account (free at [cloud.livekit.io](https://cloud.livekit.io))
-- *(Optional)* [Ollama](https://ollama.ai) with `qwen2.5:7b-instruct` pulled, for a local offline fallback
+- *(Optional)* [Ollama](https://ollama.ai) with a local fallback model pulled (only works if connected and configured properly)
 
 ### 2. Clone & Configure
 
@@ -168,8 +168,8 @@ This showcases the self-correction and idempotent tool dispatch that are the cor
 | Component | Primary Model | Fallback |
 |-----------|--------------|---------|
 | **Talker (V2V)** | `gemini-3.1-flash-live-preview` | — |
-| **Reasoner** | `gemini-3.5-flash-lite` | `qwen2.5:7b-instruct` (local Ollama) |
-| **Initializer** | `gemma-4-26b-a4b-it` | `qwen2.5:7b-instruct` (local Ollama) |
+| **Reasoner** | `gemini-3.5-flash-lite` | local fallback (Ollama, requires setup) |
+| **Initializer** | `gemma-4-26b-a4b-it` | local fallback |
 
 All primary models are accessed via the Google AI API. No local GPU is required for the primary path. The Ollama fallback activates automatically if the cloud API returns an error.
 

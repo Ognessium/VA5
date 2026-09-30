@@ -14,7 +14,7 @@ LiveKit Room (WebRTC)
     │ audio stream                     │ conversation_item_added events
     ▼                                  ▼
 Fast Talker (V2V)              Slow Reasoner (Director)
-gemini-3.1-flash-live-preview  gemini-3.5-flash-lite → qwen2.5 (fallback)
+gemini-3.1-flash-live-preview  gemini-3.5-flash-lite → local fallback
 < 300ms spoken response        async, background
 Read-only State access    ◄──  Read+Write State access
     ▲                               │
@@ -56,7 +56,7 @@ Read-only State access    ◄──  Read+Write State access
 - The Talker acts as a "good actor" — responsive, natural, but not responsible for logic
 
 ### 2. Slow Reasoner (`src/agents/reasoner.py`)
-- Powered by **`gemini-3.5-flash-lite`** (cloud), with automatic fallback to **`qwen2.5:7b-instruct`** (local Ollama) if the API is unavailable
+- Powered by **`gemini-3.5-flash-lite`** (cloud), with automatic fallback to a local Ollama model (only works if connected and configured properly)
 - Maintains full multi-turn conversation context: user speech, Talker transcripts, tool results, and state updates
 - Consumes messages from the **Guaranteed Message Queue** in a dedicated daemon thread — never blocks the LiveKit event loop
 - Calls `_analyze_and_direct()` after every meaningful event (user utterance, tool completion) to decide: call a tool, send a directive to the Talker, or output `{}` for no action
@@ -90,7 +90,7 @@ Read-only State access    ◄──  Read+Write State access
 
 ### 7. System Initializer (`src/initializer.py`)
 - Runs once at startup, before the LiveKit session opens
-- Reads `tool_manifest.json` and uses an LLM (`gemma-4-26b-a4b-it`, fallback to local Qwen) to:
+- Reads `tool_manifest.json` and uses an LLM (`gemma-4-26b-a4b-it`, fallback to local model) to:
   1. Classify tools as `read_only` or `state_modifying`
   2. Generate inverse-tool schemas for all state-modifying tools (for cancellation/undo)
   3. Produce a simplified tool summary for the Talker's system prompt
@@ -127,7 +127,6 @@ The Reasoner runs entirely off the asyncio event loop. Directives are injected b
 2. **Reasoner wakes**: reads context + State, calls LLM, decides to dispatch a tool
 3. **Tool dispatched**: Tool Manager runs it in a background thread, State updated to `in-flight`
 4. **User interrupts mid-tool**: New utterance arrives, Reasoner reads the corrected intent from context
-5. **Reasoner cancels**: Checks if the tool is still in-flight → if yes, calls `tool_manager.cancel(tool_id)` → State updated to `cancelled`
-6. **New tool dispatched**: With corrected arguments, ensuring idempotency (no duplicate state-changing calls)
-7. **Tool completes**: State updated to `success`, high-priority notification sent to Reasoner
+5. **New tool dispatched**: Reasoner dispatches a new tool call with the corrected arguments, ensuring idempotency.
+6. **Tool completes**: State updated to `success`, high-priority notification sent to Reasoner
 8. **Reasoner confirms**: Sends `[SYSTEM:SAY]` directive to Talker with the confirmed result

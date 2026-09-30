@@ -69,7 +69,7 @@ Manifest:
                 resp = requests.post(
                     "http://localhost:11434/v1/chat/completions",
                     json={
-                        "model": "qwen2.5:7b-instruct",
+                        "model": os.environ.get("OLLAMA_FALLBACK_MODEL", "qwen2.5:7b-instruct"),
                         "messages": [{"role": "user", "content": prompt}],
                         "temperature": 0.1
                     },

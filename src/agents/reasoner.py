@@ -130,7 +130,7 @@ class SlowReasoner:
         self.message_queue.shutdown()
 
     # BUG FIX #4: Model list corrected to match the documented architecture.
-    # Primary: local Ollama (qwen2.5:7b-instruct) — fast, no cloud cost.
+    # Primary: local fallback model — fast, no cloud cost (requires Ollama running).
     # Fallback: gemini-2.5-flash (cloud) — the project_analysis.md states
     # "Gemini 3.5 Flash Lite" as the intended Reasoner model; gemini-2.5-flash
     # is the correct current API name. "gemma-4-31b-it" was wrong — that is an
@@ -184,7 +184,7 @@ class SlowReasoner:
                         resp = requests.post(
                             "http://localhost:11434/v1/chat/completions",
                             json={
-                                "model": "qwen2.5:7b-instruct",
+                                "model": os.environ.get("OLLAMA_FALLBACK_MODEL", "qwen2.5:7b-instruct"),
                                 "messages": messages,
                                 "response_format": {"type": "json_object"},
                                 "temperature": 0.1
